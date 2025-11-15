@@ -1,12 +1,30 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CartContainer from "./CartContainer";
 import ProductsContainer from "./ProductsContainer";
 import NavBar from "./NavBar";
+import axios from "axios";
 
-export default function GroceriesAppContainer({ products }) {
-  const [productQuantity, setProductQuantity] = useState(
-    products.map((product) => ({ id: product.id, quantity: 0 }))
-  );
+export default function GroceriesAppContainer() {
+  const [products, setProducts] = useState([]);
+  const [productQuantity, setProductQuantity] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
+  const fetchProducts = async () => {
+    try {
+      const response = await axios.get("http://localhost:3000/products");
+      setProducts(response.data);
+      setProductQuantity(
+        response.data.map((product) => ({ id: product.id, quantity: 0 }))
+      );
+    } catch (error) {
+      console.log(error.message);
+    }
+    setIsLoading(false);
+  };
 
   const [cartList, setCartList] = useState([]);
 
