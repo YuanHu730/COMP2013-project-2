@@ -47,7 +47,7 @@
 }
 
 .CartContainer {
-  width: 25%;
+  width: 23%;
   justify-content: center;
 
   /* position: sticky; */
@@ -77,8 +77,12 @@
   width: 50%;
 }
 
+.product-form {
+  width: 20%;
+}
+
 .ProductsContainer {
-  width: 75%;
+  width: 57%;
   max-width: 800px;
   display: flex;
   flex-wrap: wrap;
