@@ -147,11 +147,11 @@ img {
   justify-content: space-around;
 }
 
-.RemoveButton {
+.RemoveButton, .DeleteButton {
   background-color: rgb(190, 0, 0);
 }
 
-#BuyButton {
+#BuyButton, .EditButton {
   background-color: green;
   width: 50%;
 }

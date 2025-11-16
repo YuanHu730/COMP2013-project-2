@@ -20,6 +20,12 @@ function ProductForm({ newProduct, handleProductFormChange, handleProductFormSub
                 <br />
                 <button type="submit">Submit</button>
             </form>
+
+            {newProduct.isEditMode && (
+                <p>
+                    {newProduct.productName} edited with id: {newProduct.id}
+                </p>
+            )}
         </div>
     );
 }
