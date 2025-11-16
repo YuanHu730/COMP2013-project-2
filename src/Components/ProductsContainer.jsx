@@ -6,6 +6,7 @@ export default function ProductsContainer({
   handleRemoveQuantity,
   handleAddToCart,
   productQuantity,
+  handleDeleteProduct,
 }) {
   // console.log("products: ", products);
   // console.log("productQuantity: ", productQuantity);
@@ -21,6 +22,7 @@ export default function ProductsContainer({
           productQuantity={
             productQuantity.find((p) => p.id === product.id).quantity
           }
+          handleDeleteProduct={handleDeleteProduct}
         />
       ))}
     </div>

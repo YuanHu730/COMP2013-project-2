@@ -42,6 +42,8 @@ export default function GroceriesAppContainer() {
     });
   };
 
+
+  // Handling add product into the database
   const handleProductFormSubmit = async (e) => {
     e.preventDefault();
 
@@ -57,9 +59,9 @@ export default function GroceriesAppContainer() {
       return;
     }
 
+    // save newProduct to database
+    let newID = "";
     try {
-      let newID = "";
-      // save newProduct to database
       await axios.post("http://localhost:3000/add-product", newProduct)
       .then((response) => {
           if (response.data.id && response.data.id.trim() !== "") {
@@ -67,38 +69,67 @@ export default function GroceriesAppContainer() {
             newID = response.data.id;
           }
       });
-      if (newID !== "") {
-        // update products and productQuantity after saving newProduct to database successfully
-        setProducts(prevProducts => {
-          const newProducts = [...prevProducts, {
-            ...newProduct, 
-            id: newID, 
-            price: newProduct.price.startsWith("$") ? newProduct.price : "$" + newProduct.price
-          }];
-          return newProducts;
-        });
-        setProductQuantity(prevProductQuantity => {
-          const newProductQuantity = [...prevProductQuantity, {id: newID, quantity: 0}];
-          return newProductQuantity;
-        }
-        );
-        // make the value of newProduct default after saving newProduct to database successfully
-        setNewProduct(prevNewProduct => {
-          return {
-            "id": "",
-            "productName": "",
-            "brand": "",
-            "image": "",
-            "price": ""
-          };
-        });
-      }
     } catch (error) {
-      console.log(error.message);
+      alert("Failed to save newProduct to the database. Error Meaagae:\n" + error.message);
+      return;
+    }
+
+    // update products, productQuantity and newProduct after saving newProduct to database successfully
+    if (newID !== "") {
+      // update products and productQuantity after saving newProduct to database successfully
+      setProducts(prevProducts => {
+        const newProducts = [...prevProducts, {
+          ...newProduct, 
+          id: newID, 
+          price: newProduct.price.startsWith("$") ? newProduct.price : "$" + newProduct.price
+        }];
+        return newProducts;
+      });
+      setProductQuantity(prevProductQuantity => {
+        const newProductQuantity = [...prevProductQuantity, {id: newID, quantity: 0}];
+        return newProductQuantity;
+      }
+      );
+      // make the value of newProduct default after saving newProduct to database successfully
+      setNewProduct(prevNewProduct => {
+        return {
+          "id": "",
+          "productName": "",
+          "brand": "",
+          "image": "",
+          "price": ""
+        };
+      });
+      alert("Save the new product into the database successfully!");
+    } else {
+      alert("Failed to get the new product's id due to an unknown backend server error.");
     }
   };
 
-  
+
+  // Handling delete product from the database by id
+  const handleDeleteProduct = async (id) => {
+    try {
+      await axios.delete(`http://localhost:3000/products/${id}`)
+        .then((response) => {
+          // update products and productQuantity after deleting the product from the database successfully
+          setProducts(prevProducts => {
+            const newProducts = prevProducts.filter(product => product.id !== id);
+            return newProducts;
+          });
+          setProductQuantity(prevProductQuantity => {
+            const newProductQuantity = prevProductQuantity.filter(productQuantity => productQuantity.id !== id);
+            return newProductQuantity;
+          }
+          );
+          alert(response.data.message);
+        });
+    } catch (error) {
+      alert("Failed to delete the product from the database. Error Meaagae:\n" + error.message);
+    }
+  };
+
+
   const [cartList, setCartList] = useState([]);
 
   const handleAddQuantity = (productId, mode) => {
@@ -188,6 +219,7 @@ export default function GroceriesAppContainer() {
           handleRemoveQuantity={handleRemoveQuantity}
           handleAddToCart={handleAddToCart}
           productQuantity={productQuantity}
+          handleDeleteProduct={handleDeleteProduct}
         />
         <CartContainer
           cartList={cartList}
