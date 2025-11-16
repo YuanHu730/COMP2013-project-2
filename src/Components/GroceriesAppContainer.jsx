@@ -34,16 +34,29 @@ export default function GroceriesAppContainer() {
     setIsLoading(false);
   };
 
+
   const handleProductFormChange = (e) => {
     setNewProduct({
         ...newProduct,
-        [e.target.name]: e.target.value
+        [e.target.name]: e.target.value.trim()
     });
   };
 
   const handleProductFormSubmit = async (e) => {
     e.preventDefault();
-    if (newProduct.productName === "" || newProduct.brand === "" || newProduct.image === "" || newProduct.price === "" ) return;
+
+    // all items in newProduct cannot be empty
+    if (newProduct.productName === "" || newProduct.brand === "" || newProduct.image === "" || newProduct.price === "") {
+      alert("All items in newProduct cannot be empty");
+      return;
+    }
+    // check the value of price input
+    const priceRegex = new RegExp("^\\$?\\d+(\\.\\d+)?$");
+    if (!priceRegex.test(newProduct.price)) {
+      alert("Price must be a number or start with $.\ne.g. 2, $4, 6.3 or $12.57");
+      return;
+    }
+
     try {
       let newID = "";
       // save newProduct to database
@@ -57,7 +70,11 @@ export default function GroceriesAppContainer() {
       if (newID !== "") {
         // update products and productQuantity after saving newProduct to database successfully
         setProducts(prevProducts => {
-          const newProducts = [...prevProducts, {...newProduct, id: newID}];
+          const newProducts = [...prevProducts, {
+            ...newProduct, 
+            id: newID, 
+            price: newProduct.price.startsWith("$") ? newProduct.price : "$" + newProduct.price
+          }];
           return newProducts;
         });
         setProductQuantity(prevProductQuantity => {
@@ -81,6 +98,7 @@ export default function GroceriesAppContainer() {
     }
   };
 
+  
   const [cartList, setCartList] = useState([]);
 
   const handleAddQuantity = (productId, mode) => {
