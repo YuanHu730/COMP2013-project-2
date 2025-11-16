@@ -15,6 +15,7 @@ export default function GroceriesAppContainer() {
   });
   const [products, setProducts] = useState([]);
   const [productQuantity, setProductQuantity] = useState([]);
+  const [cartList, setCartList] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -122,6 +123,11 @@ export default function GroceriesAppContainer() {
             return newProductQuantity;
           }
           );
+          // when deleting a product, also remove it from the cart list if it exists.
+          setCartList(prevCartList => {
+            const newCartList = prevCartList.filter(product => product.id !== id);
+            return newCartList;
+          });
           alert(response.data.message);
         });
     } catch (error) {
@@ -129,8 +135,6 @@ export default function GroceriesAppContainer() {
     }
   };
 
-
-  const [cartList, setCartList] = useState([]);
 
   const handleAddQuantity = (productId, mode) => {
     if (mode === "cart") {
